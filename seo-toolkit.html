@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Toolkit — Generator + Checklist Analyzer</title>
+<link rel="stylesheet" href="seo-toolkit.css">
+</head>
+<body>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="wrap">
+
+<div class="masthead">
+  <div class="theme-toggle">
+    <button id="themeDark" title="Dark mode">🌙</button>
+    <button id="themeLight" title="Light mode">☀️</button>
+  </div>
+  <p class="eyebrow">On-Page SEO / Field Kit</p>
+  <h1>SEO Toolkit</h1>
+  <p class="sub">Generate meta tags, then paste a page's HTML source to run it through the checklist. Styling lives in a separate seo-toolkit.css file; all logic runs client-side in your browser.</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-tab="generator">Meta Generator</button>
+  <button class="tab" data-tab="checker">Checklist Analyzer</button>
+</div>
+
+<!-- GENERATOR PANEL -->
+<div class="panel active" id="generator">
+  <div class="card">
+    <label>Page topic / what this page is about</label>
+    <input type="text" id="gen-topic" placeholder="e.g. BetVisa withdrawal process for Bangladesh users">
+
+    <label>Focus keyword</label>
+    <input type="text" id="gen-keyword" placeholder="e.g. betvisa withdrawal bangladesh">
+
+    <label>Brand / site name</label>
+    <input type="text" id="gen-brand" placeholder="e.g. Betvisa Review">
+
+    <label>Year to include (optional)</label>
+    <input type="text" id="gen-year" placeholder="e.g. 2026">
+
+    <button onclick="generateMeta()">Generate Meta Package</button>
+  </div>
+
+  <div class="card" id="gen-output" style="display:none;">
+    <div class="section-label">Title Tag Options</div>
+    <div id="gen-titles"></div>
+
+    <div class="section-label">Meta Description Options</div>
+    <div id="gen-descriptions"></div>
+
+    <div class="section-label">Focus Keyword</div>
+    <div class="result">
+      <button class="copy" onclick="copyText('gen-fk')">Copy</button>
+      <div class="val" id="gen-fk"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKER PANEL -->
+<div class="panel" id="checker">
+  <div class="card">
+    <label>Page URL (used to check canonical / self-referencing links)</label>
+    <input type="text" id="check-url" placeholder="https://example.com/page-slug/">
+
+    <label>Paste the page's HTML source (Ctrl+U on the live page, then Ctrl+A, Ctrl+C, paste here)</label>
+    <textarea id="check-html" placeholder="&lt;html&gt;...&lt;/html&gt;"></textarea>
+
+    <button onclick="runChecklist()">Run Checklist</button>
+    <button class="secondary" onclick="document.getElementById('check-html').value='';document.getElementById('check-results').style.display='none';">Clear</button>
+    <div class="hint">Tip: on the live page, right-click → "View Page Source", select all, copy, paste above. This tool cannot fetch pages directly (browsers block cross-site requests) — pasting the source is the reliable way.</div>
+  </div>
+
+  <div id="check-results" style="display:none;">
+    <div class="card" id="check-meta-card">
+      <div class="section-label">Auto-Suggested Meta (pulled from this page's own H1 &amp; title)</div>
+      <div id="check-titles"></div>
+      <div class="section-label">Meta Description Options</div>
+      <div id="check-descriptions"></div>
+      <div class="section-label">Focus Keyword</div>
+      <div class="result">
+        <button class="copy" onclick="copyText('check-fk')">Copy</button>
+        <div class="val" id="check-fk"></div>
+      </div>
+      <div class="hint" id="check-extract-note"></div>
+    </div>
+
+    <div class="summary" id="check-summary"></div>
+    <div class="card" id="check-list"></div>
+  </div>
+</div>
+
+</div><!-- /.wrap -->
+
+<script src="seo-toolkit.js"></script>
+
+</body>
+</html>
