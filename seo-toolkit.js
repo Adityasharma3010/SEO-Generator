@@ -67,16 +67,6 @@
   document.addEventListener('mouseup', () => ring.classList.remove('clicking'));
 })();
 
-// ---------- TAB SWITCHING ----------
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById(tab.dataset.tab).classList.add('active');
-  });
-});
-
 function copyText(id){
   const el = document.getElementById(id);
   navigator.clipboard.writeText(el.innerText);
@@ -155,25 +145,8 @@ function extractTopicFromDoc(doc, pageUrl){
   return {topic, keyword, brand};
 }
 
-// ---------- META GENERATOR (manual form) ----------
 function titleCase(str){
   return str.replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.substr(1).toLowerCase());
-}
-
-function generateMeta(){
-  const topic = document.getElementById('gen-topic').value.trim();
-  const keyword = document.getElementById('gen-keyword').value.trim();
-  const brand = document.getElementById('gen-brand').value.trim() || 'Site';
-  const year = document.getElementById('gen-year').value.trim();
-
-  if(!topic || !keyword){
-    alert('Fill in at least the topic and focus keyword.');
-    return;
-  }
-
-  const pkg = buildMetaPackage(topic, keyword, brand, year);
-  renderMetaPackage(pkg, 'gen-titles', 'gen-descriptions', 'gen-fk', 'g');
-  document.getElementById('gen-output').style.display = 'block';
 }
 
 // ---------- CHECKLIST ANALYZER ----------
