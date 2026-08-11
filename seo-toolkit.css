@@ -38,66 +38,65 @@ body{
   cursor:none;
 }
 
-/* ============ CUSTOM CURSOR ============ */
-.cursor-shape{
+/* ============ CUSTOM CURSOR (arrow pointer) ============ */
+.cursor-arrow{
   position:fixed; top:0; left:0; pointer-events:none; z-index:9999;
-  width:22px; height:22px; transform:translate(-50%,-50%) rotate(45deg);
-  transition:width .2s ease, height .2s ease;
+  width:22px; height:22px;
+  transform:translate(-2px,-2px);
+  transition:transform .12s ease;
 }
-.cursor-shape::before{
-  content:''; position:absolute; inset:0;
-  background:var(--accent);
-  clip-path:polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-  box-shadow:0 0 14px 2px var(--accent-glow), 0 0 2px var(--accent);
-  transition:background .2s ease, clip-path .2s ease;
+.cursor-arrow svg{
+  width:100%; height:100%;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,0.45));
 }
-.cursor-core{
-  position:fixed; top:0; left:0; pointer-events:none; z-index:9999;
-  width:4px; height:4px; border-radius:50%; background:var(--paper);
-  transform:translate(-50%,-50%);
-  box-shadow:0 0 6px 1px var(--paper);
+.cursor-arrow path{
+  fill:var(--paper);
+  stroke:var(--accent);
+  stroke-width:1.4;
+  transition:fill .15s ease, stroke .15s ease;
 }
 
-body.cursor-active .cursor-shape{
-  width:34px; height:34px;
+body.cursor-active .cursor-arrow{
+  transform:translate(-2px,-2px) scale(1.15);
 }
-body.cursor-active .cursor-shape::before{
-  clip-path:polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-  background:transparent; border:1.5px solid var(--accent);
-  box-shadow:0 0 20px 4px var(--accent-glow);
+body.cursor-active .cursor-arrow path{
+  fill:var(--accent);
+  stroke:var(--paper);
 }
-.cursor-shape.clicking{ width:14px; height:14px; }
+.cursor-arrow.clicking{
+  transform:translate(-2px,-2px) scale(0.88);
+}
 
 @media (hover:none), (pointer:coarse){
   body{cursor:auto;}
-  .cursor-shape, .cursor-core, .trail-particle{display:none;}
+  .cursor-arrow{display:none;}
 }
 
-/* particle trail — small fading sparks following the cursor */
-.trail-particle{
+/* soft glow trail — faint fading dots behind the arrow as it moves */
+.trail-glow{
   position:fixed; z-index:9997; pointer-events:none;
-  width:5px; height:5px; border-radius:50%;
+  width:6px; height:6px; border-radius:50%;
   background:var(--accent);
+  filter:blur(1px);
   transform:translate(-50%,-50%);
-  opacity:0.7;
-  animation:trailFade .6s ease-out forwards;
+  opacity:0.45;
+  animation:trailFade .5s ease-out forwards;
 }
 @keyframes trailFade{
-  to{ opacity:0; transform:translate(-50%,-50%) scale(0.2); }
+  to{ opacity:0; transform:translate(-50%,-50%) scale(0.15); }
 }
 
-/* click burst — several particles radiating outward on click */
-.burst-particle{
+/* click ripple — single clean expanding ring, not a particle burst */
+.click-ripple{
   position:fixed; z-index:9998; pointer-events:none;
-  width:5px; height:5px; border-radius:50%; background:var(--accent);
+  width:8px; height:8px; border-radius:50%;
+  border:1.5px solid var(--accent);
   transform:translate(-50%,-50%);
-  animation:burstOut .5s cubic-bezier(.22,.85,.4,1) forwards;
+  opacity:0.8;
+  animation:rippleOut .45s cubic-bezier(.22,.85,.4,1) forwards;
 }
-@keyframes burstOut{
-  to{
-    transform:translate(calc(-50% + var(--bx)), calc(-50% + var(--by))) scale(0.2);
-    opacity:0;
-  }
+@keyframes rippleOut{
+  to{ width:46px; height:46px; opacity:0; }
 }
 
 /* ============ LAYOUT ============ */
