@@ -20,51 +20,40 @@
   lightBtn.addEventListener('click', () => applyTheme('light'));
 })();
 
-// ---------- CUSTOM CURSOR (shape + trail + click burst) ----------
+// ---------- CUSTOM CURSOR (arrow pointer) ----------
 (function(){
-  const shape = document.getElementById('cursorShape');
-  const core = document.getElementById('cursorCore');
-  if(!shape || !core) return;
+  const arrow = document.getElementById('cursorArrow');
+  if(!arrow) return;
 
-  let shapeX = 0, shapeY = 0, mouseX = 0, mouseY = 0;
+  let curX = 0, curY = 0, mouseX = 0, mouseY = 0;
   let lastTrailTime = 0;
-  let lastAngle = 45;
 
   window.addEventListener('mousemove', e => {
     mouseX = e.clientX; mouseY = e.clientY;
-    core.style.left = mouseX + 'px';
-    core.style.top = mouseY + 'px';
 
-    // Spawn a trail particle every ~35ms (throttled, not every single move event)
+    // Spawn a soft glow trail dot every ~40ms, not on every single move event
     const now = Date.now();
-    if(now - lastTrailTime > 35){
+    if(now - lastTrailTime > 40){
       lastTrailTime = now;
-      const p = document.createElement('div');
-      p.className = 'trail-particle';
-      p.style.left = mouseX + 'px';
-      p.style.top = mouseY + 'px';
-      document.body.appendChild(p);
-      setTimeout(()=> p.remove(), 600);
+      const t = document.createElement('div');
+      t.className = 'trail-glow';
+      t.style.left = mouseX + 'px';
+      t.style.top = mouseY + 'px';
+      document.body.appendChild(t);
+      setTimeout(()=> t.remove(), 500);
     }
   });
 
-  function animateShape(){
-    const dx = mouseX - shapeX, dy = mouseY - shapeY;
-    shapeX += dx * 0.16;
-    shapeY += dy * 0.16;
-    shape.style.left = shapeX + 'px';
-    shape.style.top = shapeY + 'px';
-
-    // Rotate the diamond to face the direction of travel
-    if(Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5){
-      lastAngle = Math.atan2(dy, dx) * (180/Math.PI) + 45;
-      shape.style.transform = `translate(-50%,-50%) rotate(${lastAngle}deg)`;
-    }
-    requestAnimationFrame(animateShape);
+  function animateArrow(){
+    curX += (mouseX - curX) * 0.35;
+    curY += (mouseY - curY) * 0.35;
+    arrow.style.left = curX + 'px';
+    arrow.style.top = curY + 'px';
+    requestAnimationFrame(animateArrow);
   }
-  animateShape();
+  animateArrow();
 
-  // Grow + hollow the shape over interactive elements
+  // Highlight over interactive elements
   document.addEventListener('mouseover', e => {
     if(e.target.closest('button, a, input, textarea, .tab, .copy')){
       document.body.classList.add('cursor-active');
@@ -76,24 +65,17 @@
     }
   });
 
-  // Click burst — several particles fly outward from the click point
+  // Subtle pulse + expanding ripple on click
   document.addEventListener('mousedown', e => {
-    shape.classList.add('clicking');
-    const count = 8;
-    for(let i=0;i<count;i++){
-      const angle = (Math.PI * 2 / count) * i;
-      const dist = 30 + Math.random()*20;
-      const b = document.createElement('div');
-      b.className = 'burst-particle';
-      b.style.left = e.clientX + 'px';
-      b.style.top = e.clientY + 'px';
-      b.style.setProperty('--bx', Math.cos(angle)*dist + 'px');
-      b.style.setProperty('--by', Math.sin(angle)*dist + 'px');
-      document.body.appendChild(b);
-      setTimeout(()=> b.remove(), 500);
-    }
+    arrow.classList.add('clicking');
+    const r = document.createElement('div');
+    r.className = 'click-ripple';
+    r.style.left = e.clientX + 'px';
+    r.style.top = e.clientY + 'px';
+    document.body.appendChild(r);
+    setTimeout(()=> r.remove(), 450);
   });
-  document.addEventListener('mouseup', () => shape.classList.remove('clicking'));
+  document.addEventListener('mouseup', () => arrow.classList.remove('clicking'));
 })();
 
 function copyText(id){
