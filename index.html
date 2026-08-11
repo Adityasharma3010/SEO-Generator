@@ -7,8 +7,8 @@
 <link rel="stylesheet" href="seo-toolkit.css">
 </head>
 <body>
-<div class="cursor-ring" id="cursorRing"></div>
-<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-shape" id="cursorShape"></div>
+<div class="cursor-core" id="cursorCore"></div>
 <div class="wrap">
 
 <div class="masthead">
@@ -25,7 +25,7 @@
 <div class="panel active" id="checker">
   <div class="card">
     <label>Page URL</label>
-    <input type="text" id="check-url" placeholder="https://example.com/page-slug/">
+    <input type="text" id="check-url" placeholder="https://example.com/page-slug/" onkeydown="if(event.key==='Enter'){event.preventDefault(); fetchAndAnalyze();}">
     <button onclick="fetchAndAnalyze()">Fetch &amp; Analyze</button>
     <div class="hint" id="fetch-status"></div>
 
