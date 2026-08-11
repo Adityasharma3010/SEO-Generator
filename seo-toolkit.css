@@ -39,41 +39,65 @@ body{
 }
 
 /* ============ CUSTOM CURSOR ============ */
-.cursor-dot, .cursor-ring{
+.cursor-shape{
   position:fixed; top:0; left:0; pointer-events:none; z-index:9999;
+  width:22px; height:22px; transform:translate(-50%,-50%) rotate(45deg);
+  transition:width .2s ease, height .2s ease;
+}
+.cursor-shape::before{
+  content:''; position:absolute; inset:0;
+  background:var(--accent);
+  clip-path:polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  box-shadow:0 0 14px 2px var(--accent-glow), 0 0 2px var(--accent);
+  transition:background .2s ease, clip-path .2s ease;
+}
+.cursor-core{
+  position:fixed; top:0; left:0; pointer-events:none; z-index:9999;
+  width:4px; height:4px; border-radius:50%; background:var(--paper);
   transform:translate(-50%,-50%);
+  box-shadow:0 0 6px 1px var(--paper);
 }
-.cursor-dot{
-  width:6px; height:6px; border-radius:50%; background:var(--accent);
-  transition:transform .1s ease, background .2s ease;
+
+body.cursor-active .cursor-shape{
+  width:34px; height:34px;
 }
-.cursor-ring{
-  width:32px; height:32px; border-radius:50%; border:1px solid var(--line-strong);
-  transition:width .18s ease, height .18s ease, border-color .18s ease, transform .06s linear, opacity .18s ease;
+body.cursor-active .cursor-shape::before{
+  clip-path:polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  background:transparent; border:1.5px solid var(--accent);
+  box-shadow:0 0 20px 4px var(--accent-glow);
 }
-body.cursor-active .cursor-ring{
-  border-color:var(--accent); width:44px; height:44px;
-}
-body.cursor-active .cursor-dot{
-  background:var(--paper); transform:translate(-50%,-50%) scale(0.6);
-}
-.cursor-ring.clicking{ width:24px; height:24px; border-color:var(--accent); }
+.cursor-shape.clicking{ width:14px; height:14px; }
 
 @media (hover:none), (pointer:coarse){
   body{cursor:auto;}
-  .cursor-dot, .cursor-ring{display:none;}
+  .cursor-shape, .cursor-core, .trail-particle{display:none;}
 }
 
-/* click ripple */
-.click-ripple{
-  position:fixed; z-index:9998; pointer-events:none;
-  width:10px; height:10px; border-radius:50%;
-  border:1px solid var(--accent);
-  transform:translate(-50%,-50%); opacity:0.9;
-  animation:rippleOut .5s ease-out forwards;
+/* particle trail — small fading sparks following the cursor */
+.trail-particle{
+  position:fixed; z-index:9997; pointer-events:none;
+  width:5px; height:5px; border-radius:50%;
+  background:var(--accent);
+  transform:translate(-50%,-50%);
+  opacity:0.7;
+  animation:trailFade .6s ease-out forwards;
 }
-@keyframes rippleOut{
-  to{ width:70px; height:70px; opacity:0; }
+@keyframes trailFade{
+  to{ opacity:0; transform:translate(-50%,-50%) scale(0.2); }
+}
+
+/* click burst — several particles radiating outward on click */
+.burst-particle{
+  position:fixed; z-index:9998; pointer-events:none;
+  width:5px; height:5px; border-radius:50%; background:var(--accent);
+  transform:translate(-50%,-50%);
+  animation:burstOut .5s cubic-bezier(.22,.85,.4,1) forwards;
+}
+@keyframes burstOut{
+  to{
+    transform:translate(calc(-50% + var(--bx)), calc(-50% + var(--by))) scale(0.2);
+    opacity:0;
+  }
 }
 
 /* ============ LAYOUT ============ */
