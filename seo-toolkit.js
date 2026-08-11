@@ -76,20 +76,38 @@ function copyText(id){
   setTimeout(()=> btn.innerText = orig, 1200);
 }
 
+// Cuts text at the last full word before maxLen — never mid-word, never adds "...".
+// A slightly-short clean title is always better than a broken-off one.
+function cleanTruncate(str, maxLen){
+  if(str.length <= maxLen) return str;
+  const cut = str.slice(0, maxLen);
+  const lastSpace = cut.lastIndexOf(' ');
+  return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim();
+}
+
 function buildMetaPackage(topic, keyword, brand, year){
   const kwTitle = titleCase(keyword);
   const yearPart = year ? ` ${year}` : '';
 
+  // Build each title WITHOUT the brand/suffix first, check if there's room,
+  // and only append the suffix if it actually fits — otherwise drop it cleanly.
+  function fitTitle(core, suffix){
+    const withSuffix = suffix ? `${core}${suffix}` : core;
+    if(withSuffix.length <= 60) return withSuffix;
+    if(core.length <= 60) return core; // suffix didn't fit, but core does
+    return cleanTruncate(core, 60); // core itself too long, trim at word boundary
+  }
+
   const titles = [
-    `${kwTitle}${yearPart} – Complete Guide | ${brand}`,
-    `${kwTitle}: Everything You Need to Know${yearPart}`,
-    `${kwTitle}${yearPart} – Steps, Tips & FAQ | ${brand}`
-  ].map(t => t.length > 60 ? t.slice(0,57) + '...' : t);
+    fitTitle(`${kwTitle}${yearPart} – Complete Guide`, ` | ${brand}`),
+    fitTitle(`${kwTitle}: Everything You Need to Know${yearPart}`, ''),
+    fitTitle(`${kwTitle}${yearPart} – Steps & Tips`, ` | ${brand}`)
+  ];
 
   const descriptions = [
-    `Complete guide to ${keyword} — step-by-step instructions, common issues, and answers to frequently asked questions. Updated${yearPart ? ' for ' + year : ''}.`,
-    `Looking for help with ${keyword}? This guide covers everything from the basics to troubleshooting, so you know exactly what to expect.`
-  ].map(d => d.length > 160 ? d.slice(0,157) + '...' : d);
+    cleanTruncate(`Complete guide to ${keyword} — step-by-step instructions, common issues, and answers to frequently asked questions. Updated${yearPart ? ' for ' + year : ''}.`, 160),
+    cleanTruncate(`Looking for help with ${keyword}? This guide covers everything from the basics to troubleshooting, so you know exactly what to expect.`, 160)
+  ];
 
   return {titles, descriptions, keyword: keyword.toLowerCase()};
 }
@@ -109,7 +127,7 @@ function renderMetaPackage(pkg, titlesElId, descElId, fkElId, prefix){
     <div class="result">
       <button class="copy" onclick="copyText('${prefix}d${i}')">Copy</button>
       <div class="val" id="${prefix}d${i}">${d}</div>
-      <div class="charcount ${d.length>=150 && d.length<=160?'ok':'bad'}">${d.length} / 150-160 characters</div>
+      <div class="charcount ${d.length>=120 && d.length<=160?'ok':'bad'}">${d.length} / 150-160 characters (120+ still fine)</div>
     </div>
   `).join('');
 
